@@ -5,6 +5,14 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  // Three.js scenes mutate buffers, uniforms and vectors inside useFrame by design.
+  {
+    files: ["src/components/scene/**"],
+    rules: {
+      "react-hooks/immutability": "off",
+      "react-hooks/purity": "off",
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
