@@ -24,9 +24,10 @@ function Walls({ tunnel }: { tunnel: Tunnel }) {
         uniforms: {
           uTime: { value: 0 },
           uLength: { value: tunnel.length },
-          uEarth: { value: new THREE.Color("#2a190d") },
-          uAmber: { value: new THREE.Color("#ffb347").multiplyScalar(1.3) },
-          uTeal: { value: new THREE.Color("#3ef0d0").multiplyScalar(1.5) },
+          uBase: { value: new THREE.Color("#0b0d26") },
+          uEdge: { value: new THREE.Color("#6f7dff").multiplyScalar(1.2) },
+          uGold: { value: new THREE.Color("#ffc247").multiplyScalar(1.6) },
+          uCyan: { value: new THREE.Color("#3ef0ff").multiplyScalar(1.4) },
         },
       }),
     [tunnel]
@@ -63,8 +64,8 @@ function Ants({ tunnel, count }: { tunnel: Tunnel; count: number }) {
     const angle = new Float32Array(count);
     const speed = new Float32Array(count);
     const colors = new Float32Array(count * 3);
-    const amber = new THREE.Color("#ffb347").multiplyScalar(2.2);
-    const teal = new THREE.Color("#3ef0d0").multiplyScalar(2.2);
+    const cyan = new THREE.Color("#7fe9ff").multiplyScalar(2.2);
+    const gold = new THREE.Color("#ffc247").multiplyScalar(2.4);
     const trails = 14;
     for (let i = 0; i < count; i++) {
       u[i] = Math.random();
@@ -72,7 +73,7 @@ function Ants({ tunnel, count }: { tunnel: Tunnel; count: number }) {
       const trail = i % trails;
       angle[i] = (trail / trails) * Math.PI * 2 + (Math.random() - 0.5) * 0.08;
       speed[i] = (trail % 2 ? 1 : -1) * (1.2 + Math.random() * 0.8);
-      const c = i % 9 === 0 ? teal : amber;
+      const c = i % 9 === 0 ? gold : cyan;
       colors.set([c.r, c.g, c.b], i * 3);
     }
     const geometry = new THREE.BufferGeometry();
@@ -140,7 +141,7 @@ function Chambers({ tunnel }: { tunnel: Tunnel }) {
         const m = new THREE.Matrix4().lookAt(eye, pos, new THREE.Vector3(0, 1, 0));
         const q = new THREE.Quaternion().setFromRotationMatrix(m);
         return (
-          <group key={i} position={pos} quaternion={q} scale={portrait ? 0.5 : 1}>
+          <group key={i} position={pos} quaternion={q} scale={portrait ? (i === 0 ? 0.72 : 0.5) : 1}>
             {Piece && <Piece />}
           </group>
         );
@@ -177,7 +178,7 @@ export default function ColonyScene() {
       camera={{ fov: 62, near: 0.05, far: 120 }}
       gl={{ antialias: false, powerPreference: "high-performance" }}
     >
-      <color attach="background" args={["#050307"]} />
+      <color attach="background" args={["#04050d"]} />
       <Walls tunnel={tunnel} />
       <Ants tunnel={tunnel} count={lowPower ? 1800 : 4200} />
       <Chambers tunnel={tunnel} />

@@ -129,36 +129,68 @@ export const wallVertex = /* glsl */ `
   }
 `;
 
+// "Circuit hive": a honeycomb of hex cells (the swarm's home) etched with
+// circuit traces like the ones in the Yukty logo. Gold cells light up in waves
+// racing down the tunnel while data pulses run along the traces.
 export const wallFragment = /* glsl */ `
   uniform float uTime;
   uniform float uLength;
-  uniform vec3 uEarth;
-  uniform vec3 uAmber;
-  uniform vec3 uTeal;
+  uniform vec3 uBase;
+  uniform vec3 uEdge;
+  uniform vec3 uGold;
+  uniform vec3 uCyan;
   varying vec2 vUv;
   varying float vDepth;
 
+  float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+  }
+
+  // Returns (distance to cell edge, cell id).
+  vec3 hexCell(vec2 uv) {
+    const vec2 r = vec2(1.0, 1.7320508);
+    vec2 h = r * 0.5;
+    vec2 a = mod(uv, r) - h;
+    vec2 b = mod(uv - h, r) - h;
+    vec2 gv = dot(a, a) < dot(b, b) ? a : b;
+    vec2 q = abs(gv);
+    float edge = 0.5 - max(dot(q, normalize(r)), q.x);
+    return vec3(edge, uv - gv);
+  }
+
   void main() {
     float s = vUv.x * uLength;
-    float a = vUv.y * 6.28318;
+    // 26 cells around: an integer count so the honeycomb wraps without a seam.
+    vec2 uv = vec2(vUv.y * 26.0, s * 0.75);
+    vec3 cell = hexCell(uv);
+    float edge = cell.x;
+    vec2 id = cell.yz;
+    float rnd = hash(id);
 
-    // Organic veins carved into the soil.
-    float n1 = sin(s * 0.9 + sin(a * 3.0 + s * 0.15) * 1.8) * sin(a * 7.0 + sin(s * 0.45) * 2.2);
-    float veins = smoothstep(0.94, 1.0, abs(n1));
-    float n2 = sin(s * 2.3 + a * 5.0 + sin(s * 0.3));
-    float fine = smoothstep(0.97, 1.0, abs(n2)) * 0.35;
+    float rim = smoothstep(0.045, 0.0, edge);
+    float rimGlow = smoothstep(0.16, 0.0, edge) * 0.35;
 
-    // Pheromone pulses flowing deeper into the colony.
-    float band = fract(s * 0.035 - uTime * 0.12);
-    float pulse = exp(-pow(band - 0.5, 2.0) * 260.0);
-    float trail = smoothstep(0.985, 1.0, sin(a * 2.0 + s * 0.05)) * (0.6 + 0.4 * sin(s * 0.8 - uTime * 3.0));
+    // Waves of gold cells racing deeper into the tunnel.
+    float wave = sin(id.y * 0.22 - uTime * 2.2 + rnd * 1.5);
+    float lit = smoothstep(0.93, 1.0, wave) * step(0.55, rnd);
+    float sparkle = step(0.985, hash(id + floor(uTime * 3.0)));
+    float fill = (lit + sparkle * 0.6) * smoothstep(0.0, 0.25, edge);
 
-    vec3 col = uEarth * (0.55 + 0.45 * sin(a * 2.0 + s * 0.2));
-    col += uAmber * (veins * 0.55 + fine * 0.6);
-    col += uTeal * pulse * (0.12 + veins * 0.9);
-    col += uAmber * trail * 0.7;
+    // Circuit traces running along the tunnel, with packets of light on them.
+    float lane = vUv.y * 13.0;
+    float laneId = floor(lane);
+    float onLane = step(0.6, hash(vec2(laneId, floor(s * 0.08))));
+    float trace = smoothstep(0.06, 0.0, abs(fract(lane) - 0.5)) * onLane;
+    float packet = smoothstep(0.94, 1.0, fract(s * 0.05 - uTime * (0.35 + hash(vec2(laneId, 3.0)) * 0.4)));
+    float node = smoothstep(0.18, 0.12, length(vec2(fract(lane) - 0.5, (fract(s * 0.3) - 0.5) * 0.6))) * onLane * step(0.7, hash(vec2(laneId, floor(s * 0.3))));
 
-    float fog = exp(-vDepth * 0.055);
+    vec3 col = uBase * (0.7 + 0.3 * rnd);
+    col += uEdge * (rim * 0.55 + rimGlow * 0.4);
+    col += uGold * fill * 0.9;
+    col += uCyan * trace * (0.18 + packet * 1.6);
+    col += uGold * node * 0.8;
+
+    float fog = exp(-vDepth * 0.05);
     gl_FragColor = vec4(col * fog, 1.0);
   }
 `;

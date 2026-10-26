@@ -1,12 +1,12 @@
 :root {
-  --bg: #050307;
+  --bg: #04050d;
   --ink: #f6ecdf;
   --ink-dim: rgba(246, 236, 223, 0.68);
   --ink-faint: rgba(246, 236, 223, 0.38);
   --amber: #ffb347;
   --amber-soft: #ffcf85;
-  --teal: #3ef0d0;
-  --panel: rgba(14, 9, 6, 0.58);
+  --teal: #5fe7ff;
+  --panel: rgba(7, 9, 26, 0.6);
   --line: rgba(255, 179, 71, 0.22);
   --radius: 18px;
 }

@@ -11,7 +11,7 @@ const ColonyScene = dynamic(() => import("./scene/ColonyScene"), { ssr: false })
 
 const METRES_PER_CHAMBER = 12;
 // Reveal the hero text anyway if the 3D intro never reports in (no WebGL, slow load).
-const INTRO_FALLBACK_MS = 7000;
+const INTRO_FALLBACK_MS = 9000;
 
 function Value({ text }: { text: string }) {
   return isPlaceholder(text) ? <span className="placeholder">{text}</span> : <>{text}</>;
