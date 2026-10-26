@@ -6,3 +6,6 @@ export const scrollState = {
   pointerX: 0,
   pointerY: 0,
 };
+
+// Fired by the 3D logo intro once the logo lands, so the hero text can follow it in.
+export const LOGO_SETTLED_EVENT = "yukty:logo-settled";

@@ -3,6 +3,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import LogoReveal from "./LogoReveal";
 
 // One glowing object per chamber. Each sits in a local frame whose -z faces
 // the approaching camera, so +x reads as "screen right" and +y as "up".
@@ -54,29 +55,6 @@ function OrbitDust({ count = 400, radius = 1.6, color = AMBER, size = 0.04 }) {
     <points ref={ref} geometry={geometry} rotation={[0.45, 0, 0.2]}>
       <pointsMaterial color={glow(color)} size={size} transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
     </points>
-  );
-}
-
-// 0 · Arrival: the colony's core.
-function Core() {
-  const inner = useRef<THREE.Mesh>(null);
-  useFrame(({ clock }) => {
-    if (inner.current) inner.current.scale.setScalar(0.55 + Math.sin(clock.elapsedTime * 2) * 0.05);
-  });
-  return (
-    <group>
-      <Spin speed={0.25}>
-        <mesh>
-          <icosahedronGeometry args={[1.1, 1]} />
-          <meshBasicMaterial color={glow(AMBER, 1.6)} wireframe toneMapped={false} />
-        </mesh>
-      </Spin>
-      <mesh ref={inner}>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshBasicMaterial color={glow(TEAL, 1.4)} toneMapped={false} />
-      </mesh>
-      <OrbitDust count={600} radius={1.9} />
-    </group>
   );
 }
 
@@ -412,4 +390,4 @@ function Portal() {
   );
 }
 
-export const centerpieces = [Core, Bridge, Pillars, Murmuration, AntGraph, Landscape, DroneFleet, Helix, Zero, Constellation, Portal];
+export const centerpieces = [LogoReveal, Bridge, Pillars, Murmuration, AntGraph, Landscape, DroneFleet, Helix, Zero, Constellation, Portal];

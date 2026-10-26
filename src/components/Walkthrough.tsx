@@ -3,13 +3,15 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { chapters, company, isPlaceholder, programme, socials } from "@/config/yukty";
-import { scrollState } from "@/lib/scrollState";
+import { LOGO_SETTLED_EVENT, scrollState } from "@/lib/scrollState";
 import AcoDemo from "./demos/AcoDemo";
 import PsoDemo from "./demos/PsoDemo";
 
 const ColonyScene = dynamic(() => import("./scene/ColonyScene"), { ssr: false });
 
 const METRES_PER_CHAMBER = 12;
+// Reveal the hero text anyway if the 3D intro never reports in (no WebGL, slow load).
+const INTRO_FALLBACK_MS = 7000;
 
 function Value({ text }: { text: string }) {
   return isPlaceholder(text) ? <span className="placeholder">{text}</span> : <>{text}</>;
@@ -86,6 +88,17 @@ export default function Walkthrough() {
   const sections = useRef<(HTMLElement | null)[]>([]);
   const [active, setActive] = useState(0);
   const [depth, setDepth] = useState(0);
+  const [introDone, setIntroDone] = useState(false);
+
+  useEffect(() => {
+    const done = () => setIntroDone(true);
+    const fallback = window.setTimeout(done, INTRO_FALLBACK_MS);
+    window.addEventListener(LOGO_SETTLED_EVENT, done);
+    return () => {
+      window.clearTimeout(fallback);
+      window.removeEventListener(LOGO_SETTLED_EVENT, done);
+    };
+  }, []);
 
   useEffect(() => {
     const update = () => {
@@ -176,14 +189,24 @@ export default function Walkthrough() {
             ref={(el) => {
               sections.current[i] = el;
             }}
-            className={`chapter${c.demo ? " has-demo" : ""}${i === 0 ? " is-hero" : ""}${i === active ? " is-active" : ""}`}
+            className={`chapter${c.demo ? " has-demo" : ""}${i === 0 ? ` is-hero${introDone ? " intro-done" : ""}` : ""}${i === active ? " is-active" : ""}`}
           >
             <div className="panel">
               <p className="kicker">
                 <span>Chamber {String(i).padStart(2, "0")}</span>
                 {c.kicker}
               </p>
-              <h2>{c.title}</h2>
+              {i === 0 ? (
+                <h2 className="welcome">
+                  {c.title.split(" ").map((word, w) => (
+                    <span key={w} style={{ "--w": w } as React.CSSProperties}>
+                      {word}
+                    </span>
+                  ))}
+                </h2>
+              ) : (
+                <h2>{c.title}</h2>
+              )}
               <p className="lead">{c.lead}</p>
               {c.points && (
                 <ul className="points">

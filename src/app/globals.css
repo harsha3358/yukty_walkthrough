@@ -219,6 +219,37 @@ button {
   font-size: clamp(36px, 5.6vw, 68px);
 }
 
+/* Hero waits for the 3D logo to land, then rises in word by word. */
+.is-hero .panel > * {
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.is-hero:not(.intro-done) .panel > *,
+.is-hero:not(.intro-done) .welcome span {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.is-hero .panel > .lead {
+  transition-delay: 0.55s;
+}
+
+.is-hero .panel > .scroll-cue {
+  transition-delay: 0.9s;
+}
+
+.welcome span {
+  display: inline-block;
+  margin-right: 0.24em;
+  background: linear-gradient(175deg, #fff4c9 10%, #ffc845 50%, #b9811c 92%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 18px rgba(255, 190, 70, 0.35));
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: calc(var(--w) * 0.12s);
+}
+
 .kicker {
   display: flex;
   flex-wrap: wrap;

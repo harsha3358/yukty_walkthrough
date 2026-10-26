@@ -39,9 +39,9 @@ export const chapters: Chapter[] = [
   {
     id: "arrival",
     kicker: "Enter the colony",
-    title: "Thousands of simple minds. One brilliant idea.",
+    title: "Welcome to Yukty AI",
     lead:
-      "Greetings from Yukty AI Solutions. Scroll to travel through the colony — every chamber is one part of the collaboration we are proposing for your students.",
+      "Thousands of simple minds. One brilliant idea. Scroll to travel through the colony — every chamber is one part of the collaboration we are proposing for your students.",
   },
   {
     id: "who",
