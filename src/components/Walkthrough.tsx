@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { chapters, company, isPlaceholder, programme, socials } from "@/config/yukty";
 import { LOGO_SETTLED_EVENT, scrollState } from "@/lib/scrollState";
 import AcoDemo from "./demos/AcoDemo";
@@ -199,9 +199,10 @@ export default function Walkthrough() {
               {i === 0 ? (
                 <h2 className="welcome">
                   {c.title.split(" ").map((word, w) => (
-                    <span key={w} style={{ "--w": w } as React.CSSProperties}>
-                      {word}
-                    </span>
+                    <Fragment key={w}>
+                      {w > 0 && " "}
+                      <span style={{ "--w": w } as React.CSSProperties}>{word}</span>
+                    </Fragment>
                   ))}
                 </h2>
               ) : (

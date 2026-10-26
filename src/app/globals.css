@@ -240,7 +240,6 @@ button {
 
 .welcome span {
   display: inline-block;
-  margin-right: 0.24em;
   background: linear-gradient(175deg, #fff4c9 10%, #ffc845 50%, #b9811c 92%);
   -webkit-background-clip: text;
   background-clip: text;
