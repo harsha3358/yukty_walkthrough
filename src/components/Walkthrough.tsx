@@ -7,9 +7,10 @@ import { LOGO_SETTLED_EVENT, scrollState } from "@/lib/scrollState";
 import AcoDemo from "./demos/AcoDemo";
 import PsoDemo from "./demos/PsoDemo";
 
-const ColonyScene = dynamic(() => import("./scene/ColonyScene"), { ssr: false });
+const SwarmScene = dynamic(() => import("./scene/SwarmScene"), { ssr: false });
 
-const METRES_PER_CHAMBER = 12;
+const AGENTS = 480;
+const TYPE_MS = 22;
 // Reveal the hero text anyway if the 3D intro never reports in (no WebGL, slow load).
 const INTRO_FALLBACK_MS = 9000;
 
@@ -87,8 +88,28 @@ function Ask() {
 export default function Walkthrough() {
   const sections = useRef<(HTMLElement | null)[]>([]);
   const [active, setActive] = useState(0);
-  const [depth, setDepth] = useState(0);
   const [introDone, setIntroDone] = useState(false);
+  const [sync, setSync] = useState("99.8");
+  // [mission, characters typed]: a new mission restarts the typing from zero.
+  const [typing, setTyping] = useState<[number, number]>([0, 0]);
+
+  // Live-looking telemetry for the HUD.
+  useEffect(() => {
+    const id = window.setInterval(() => setSync((99.2 + Math.random() * 0.79).toFixed(1)), 1400);
+    return () => window.clearInterval(id);
+  }, []);
+
+  // Type out the active mission's terminal log.
+  const log = chapters[active].log.map((line) => `> ${line}`).join("\n");
+  useEffect(() => {
+    const id = window.setInterval(() => setTyping((prev) => {
+          const [m, n] = prev;
+          if (m !== active) return [active, 1];
+          return n >= log.length ? prev : [m, n + 1];
+        }), TYPE_MS);
+    return () => window.clearInterval(id);
+  }, [active, log.length]);
+  const typed = typing[0] === active ? typing[1] : 0;
 
   useEffect(() => {
     const done = () => setIntroDone(true);
@@ -109,18 +130,17 @@ export default function Walkthrough() {
       while (i < tops.length - 1 && y >= tops[i + 1]) i++;
       const span = i < tops.length - 1 ? tops[i + 1] - tops[i] : window.innerHeight;
       const f = Math.min(Math.max((y - tops[i]) / span, 0), 1);
-      // Hold still in each chamber, then glide quickly to the next.
+      // Hold still on each mission, then glide quickly to the next.
       const eased = f < 0.45 ? 0 : (f - 0.45) / 0.55;
       const chapter = Math.min(i + eased * eased * (3 - 2 * eased), chapters.length - 1);
       scrollState.chapter = chapter;
       setActive(Math.round(chapter));
-      setDepth(Math.round(chapter * METRES_PER_CHAMBER));
     };
     const pointer = (e: PointerEvent) => {
       scrollState.pointerX = (e.clientX / window.innerWidth) * 2 - 1;
       scrollState.pointerY = -((e.clientY / window.innerHeight) * 2 - 1);
     };
-    // Presenter mode: arrow keys / clicker jump chamber by chamber.
+    // Presenter mode: arrow keys / clicker jump mission by mission.
     const keys = (e: KeyboardEvent) => {
       const next = ["ArrowRight", "ArrowDown", "PageDown", " "].includes(e.key);
       const prev = ["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key);
@@ -143,43 +163,67 @@ export default function Walkthrough() {
     };
   }, []);
 
-  const finalDepth = (chapters.length - 2) * METRES_PER_CHAMBER;
-  const shownDepth = active === chapters.length - 1 ? 0 : depth;
+  const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
     <>
       <div className="stage" aria-hidden>
-        <ColonyScene />
+        <SwarmScene />
       </div>
 
       <header className="hud-top">
         <a className="brand" href={company.website} target="_blank" rel="noreferrer">
           <span className="brand-mark" />
           {company.shortName}
+          <small>Swarm OS v1.0</small>
         </a>
-        <span className="hud-hint">Scroll or use ← → to explore</span>
+        <dl className="hud-stats" aria-label="Swarm telemetry">
+          <div>
+            <dt>Agents</dt>
+            <dd>{AGENTS}</dd>
+          </div>
+          <div>
+            <dt>Mission</dt>
+            <dd>
+              {pad(active)}/{pad(chapters.length - 1)}
+            </dd>
+          </div>
+          <div>
+            <dt>Sync</dt>
+            <dd>{sync}%</dd>
+          </div>
+        </dl>
+        <span className="live">
+          <i /> Live
+        </span>
       </header>
 
-      <nav className="depth" aria-label="Chambers">
-        <div className="depth-readout">
-          <span>Depth</span>
-          <strong>{active === chapters.length - 1 ? "Surface" : `${shownDepth} m`}</strong>
-        </div>
+      <nav className="missions" aria-label="Missions">
         <ol>
           {chapters.map((c, i) => (
             <li key={c.id}>
               <button
                 type="button"
                 className={i === active ? "on" : undefined}
-                aria-label={`Chamber ${i}: ${c.kicker}`}
                 aria-current={i === active ? "step" : undefined}
                 onClick={() => sections.current[i]?.scrollIntoView({ behavior: "smooth" })}
-              />
+              >
+                <span className="mission-dot" />
+                <span className="mission-label">
+                  {pad(i)} {c.code}
+                </span>
+              </button>
             </li>
           ))}
         </ol>
-        <span className="depth-max">{finalDepth} m</span>
       </nav>
+
+      <pre className="terminal" aria-hidden>
+        <span className="terminal-title">swarm@yukty:~$ mission_{pad(active)}.{chapters[active].code.toLowerCase()}</span>
+        {"\n"}
+        {log.slice(0, typed)}
+        <span className="caret" />
+      </pre>
 
       <main className="chapters">
         {chapters.map((c, i) => (
@@ -192,8 +236,16 @@ export default function Walkthrough() {
             className={`chapter${c.demo ? " has-demo" : ""}${i === 0 ? ` is-hero${introDone ? " intro-done" : ""}` : ""}${i === active ? " is-active" : ""}`}
           >
             <div className="panel">
+              <div className="window-bar" aria-hidden>
+                <span className="window-dots">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                mission_{pad(i)}.{c.code.toLowerCase()}
+              </div>
               <p className="kicker">
-                <span>Chamber {String(i).padStart(2, "0")}</span>
+                <span>Mission {pad(i)}</span>
                 {c.kicker}
               </p>
               {i === 0 ? (
@@ -225,7 +277,7 @@ export default function Walkthrough() {
               {c.demo === "aco" && <AcoDemo />}
               {c.demo === "pso" && <PsoDemo />}
               {c.id === "ask" && <Ask />}
-              {i === 0 && <p className="scroll-cue">Scroll to descend ↓</p>}
+              {i === 0 && <p className="scroll-cue">Scroll to run the missions ↓</p>}
             </div>
           </section>
         ))}

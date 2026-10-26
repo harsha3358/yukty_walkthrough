@@ -13,7 +13,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Yukty AI · The Colony",
+  title: "Yukty AI · Swarm OS",
   description:
     "A 3D walkthrough of the Yukty AI Solutions student initiative: industry training, internships, placement assistance and a hands-on Swarm Intelligence workshop.",
 };

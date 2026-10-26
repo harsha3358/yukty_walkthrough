@@ -28,6 +28,9 @@ export const isPlaceholder = (value: string) => value.startsWith("[") && value.e
 
 export type Chapter = {
   id: string;
+  // Mission code and terminal lines shown in the Swarm OS HUD.
+  code: string;
+  log: string[];
   kicker: string;
   title: string;
   lead: string;
@@ -38,20 +41,26 @@ export type Chapter = {
 export const chapters: Chapter[] = [
   {
     id: "arrival",
-    kicker: "Enter the colony",
+    code: "BOOT",
+    log: ["swarm.boot --agents 480", "calibrating formation: LOGO", "status: ONLINE"],
+    kicker: "Boot sequence",
     title: "Welcome to Yukty AI",
     lead:
-      "Thousands of simple minds. One brilliant idea. Scroll to travel through the colony — every chamber is one part of the collaboration we are proposing for your students.",
+      "Thousands of simple agents. One intelligent system. Scroll to run the missions — each one is part of the collaboration we are proposing for your students.",
   },
   {
     id: "who",
+    code: "LINK",
+    log: ["link.establish(industry, campus)", "handshake ok · latency 12ms"],
     kicker: "Who we are",
-    title: "A tunnel between industry and campus",
+    title: "A live link between industry and campus",
     lead:
       "Yukty AI Solutions runs a student development initiative built around industry-oriented training, internships, placement assistance and career development in emerging technologies.",
   },
   {
     id: "pillars",
+    code: "CORE",
+    log: ["load modules: training, internship, placement", "3/3 modules active"],
     kicker: "What we bring",
     title: "Three pillars for every student",
     lead: "One initiative, three outcomes that build on each other.",
@@ -63,6 +72,8 @@ export const chapters: Chapter[] = [
   },
   {
     id: "swarm",
+    code: "FLOCK",
+    log: ["mode = emergent", "rules: separation · alignment · cohesion", "no leader detected — as designed"],
     kicker: "The workshop topic",
     title: "What is Swarm Intelligence?",
     lead:
@@ -71,6 +82,8 @@ export const chapters: Chapter[] = [
   },
   {
     id: "aco",
+    code: "ROUTE",
+    log: ["aco.solve(hub → drop)", "pheromone reinforced on shortest path", "best route locked"],
     kicker: "Hands-on · Algorithm 01",
     title: "Ant Colony Optimization",
     lead:
@@ -79,6 +92,8 @@ export const chapters: Chapter[] = [
   },
   {
     id: "pso",
+    code: "SEEK",
+    log: ["pso.search(target = hotspot)", "gbest updated · swarm converging"],
     kicker: "Hands-on · Algorithm 02",
     title: "Particle Swarm Optimization",
     lead:
@@ -87,6 +102,8 @@ export const chapters: Chapter[] = [
   },
   {
     id: "applications",
+    code: "DEPLOY",
+    log: ["deploy: ai · robotics · drones · autonomy · mas", "light-show sequence running"],
     kicker: "Where it's used",
     title: "From ant hills to drone fleets",
     lead: "The same principles run some of today's most exciting systems.",
@@ -100,6 +117,8 @@ export const chapters: Chapter[] = [
   },
   {
     id: "workshop",
+    code: "TRAIN",
+    log: ["workshop.schedule(sessions = 5)", "hands-on kits ready"],
     kicker: "The workshop",
     title: "Learn it. Build it. Present it.",
     lead: `Duration: ${programme.workshopDuration}. Structure, requirements and approval are finalised with your placement team.`,
@@ -113,6 +132,8 @@ export const chapters: Chapter[] = [
   },
   {
     id: "internship",
+    code: "ENLIST",
+    log: ["participation_fee = ₹0", "pipeline: workshop → assessment → interview → offer"],
     kicker: "Internship & platform",
     title: "Zero fee. Real experience.",
     lead:
@@ -127,6 +148,8 @@ export const chapters: Chapter[] = [
   },
   {
     id: "careers",
+    code: "LAUNCH",
+    log: ["career.paths = 6", "constellation mapped"],
     kicker: "Where students go next",
     title: "A constellation of careers",
     lead:
@@ -134,8 +157,10 @@ export const chapters: Chapter[] = [
   },
   {
     id: "ask",
-    kicker: "Surface",
-    title: "Let's build this colony together",
+    code: "CONNECT",
+    log: ["awaiting: placement team", "open channel → yukty.com"],
+    kicker: "Final mission",
+    title: "Let's run this mission together",
     lead:
       "We would welcome a suitable time slot to present the initiative to your Placement Team and HR representatives and to discuss the proposed workshop.",
   },
