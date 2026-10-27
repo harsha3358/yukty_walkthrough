@@ -46,13 +46,11 @@ function SocialLinks() {
 }
 
 function Ask() {
-  const mail = isPlaceholder(company.email)
-    ? undefined
-    : `mailto:${company.email}?subject=${encodeURIComponent("Swarm Intelligence workshop — meeting request")}`;
+  const mail = `mailto:${company.emails[0]}?subject=${encodeURIComponent("Swarm Intelligence workshop — meeting request")}`;
   return (
     <>
       <div className="cta-row">
-        <a className="cta" href={mail} aria-disabled={!mail}>
+        <a className="cta" href={mail}>
           Schedule a meeting with our team
         </a>
         <a className="cta ghost" href={company.website} target="_blank" rel="noreferrer">
@@ -62,20 +60,30 @@ function Ask() {
       <dl className="contact">
         <div>
           <dt>Email</dt>
-          <dd>
-            <Value text={company.email} />
+          <dd className="contact-list">
+            {company.emails.map((email) => (
+              <a key={email} href={`mailto:${email}`}>
+                {email}
+              </a>
+            ))}
           </dd>
         </div>
         <div>
           <dt>Phone</dt>
-          <dd>
-            <Value text={company.phone} />
+          <dd className="contact-list">
+            {company.phones.map((phone) => (
+              <a key={phone} href={`tel:${phone.replace(/\s/g, "")}`}>
+                {phone}
+              </a>
+            ))}
           </dd>
         </div>
         <div>
           <dt>Office</dt>
           <dd>
-            <Value text={company.address} />
+            <a href={company.mapUrl} target="_blank" rel="noreferrer">
+              View on Google Maps ↗
+            </a>
           </dd>
         </div>
       </dl>

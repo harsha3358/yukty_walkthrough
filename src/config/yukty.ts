@@ -5,22 +5,23 @@ export const company = {
   name: "Yukty AI Solutions",
   shortName: "YUKTY",
   website: "https://yukty.com/",
-  email: "[contact@yukty.com]",
-  phone: "[+91 00000 00000]",
-  address: "[Office address, City]",
+  // The first email receives "Schedule a meeting" requests.
+  emails: ["hr@yukty.com", "meghanaseram@yukty.com"],
+  phones: ["+91 91218 88140", "+91 91218 88139"],
+  mapUrl: "https://maps.app.goo.gl/R2y4dxC39tji4KH47",
 };
 
 export const socials = [
-  { label: "Instagram", handle: "[@yukty.ai]", url: "[https://instagram.com/your-handle]" },
-  { label: "Facebook", handle: "[Yukty AI Solutions]", url: "[https://facebook.com/your-page]" },
-  { label: "LinkedIn", handle: "[Yukty AI Solutions]", url: "[https://linkedin.com/company/your-page]" },
+  { label: "Instagram", handle: "@yukty.ai", url: "https://www.instagram.com/yukty.ai/" },
+  { label: "Facebook", handle: "Yukty AI Solutions Pvt Ltd", url: "https://www.facebook.com/people/Yukty-AI-Solutions-Pvt-Ltd/61595995527504/" },
+  { label: "LinkedIn", handle: "Yukty AI Solutions", url: "https://www.linkedin.com/in/yukty-ai-solutions" },
+  // To add X later: { label: "X", handle: "@your-handle", url: "https://x.com/your-handle" },
 ];
 
 export const programme = {
-  workshopDuration: "[e.g. 1 day · 6 hours]",
-  internshipDuration: "[e.g. 3 months]",
-  stipend: "[₹ amount / month]",
-  workingHours: "[e.g. 4 hrs/day, flexible]",
+  workshopDuration: "3 hours",
+  internshipDuration: "3 months",
+  workingHours: "9:30 AM – 6:30 PM",
   participationFee: "₹0",
 };
 
@@ -120,7 +121,6 @@ export const chapters: Chapter[] = [
     points: [
       `Participation fee: ${programme.participationFee}`,
       `Internship duration: ${programme.internshipDuration}`,
-      `Stipend: ${programme.stipend}`,
       `Working hours: ${programme.workingHours}`,
       "Selection: Workshop → Assessment → Interview → Offer",
     ],
