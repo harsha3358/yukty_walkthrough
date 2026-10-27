@@ -13,13 +13,13 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Yukty AI · Swarm OS",
+  title: "Yukty AI · The Colony",
   description:
     "A 3D walkthrough of the Yukty AI Solutions student initiative: industry training, internships, placement assistance and a hands-on Swarm Intelligence workshop.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#04050d",
+  themeColor: "#050307",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
