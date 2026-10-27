@@ -7,7 +7,7 @@ export const company = {
   website: "https://yukty.com/",
   // The first email receives "Schedule a meeting" requests.
   emails: ["hr@yukty.com", "meghanaseram@yukty.com"],
-  phones: ["+91 91218 88140", "+91 91218 88139"],
+  phones: ["+91 94913 48032", "+91 94913 59421"],
   mapUrl: "https://maps.app.goo.gl/R2y4dxC39tji4KH47",
 };
 
